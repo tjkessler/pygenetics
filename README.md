@@ -1,0 +1,2 @@
+# PyGenetics
+Genetic algorithm framework
