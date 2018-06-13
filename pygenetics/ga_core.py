@@ -1,12 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  ga_core.py
+#	ga_core.py
 #  
-#  Developed in 2018 by Travis Kessler <travis.j.kessler@gmail.com>
+#	Developed in 2018 by Travis Kessler <travis.j.kessler@gmail.com>
 #  
-#  ga_core.py contains classes/functions for optimizing cost functions
-#  			  with variable parameters (hyperparameters)
+#	ga_core.py contains classes/functions for optimizing arbritrary
+#	cost functions (given as an argument, *cost_fn*, to the Population
+# 	object). The given cost function takes a 'feed_dict' argument, a 
+# 	dictionary, containing keys and values (parameters) that the cost
+# 	function will use to calculate and return a fitness score (a metric 
+# 	to determine the performance of the cost function using the given 
+# 	paramters).
+#
+#	Optionally, the Population object can take an arbitrary selection 
+# 	function *select_fn* argument, a function used to rank Population 
+# 	Members based on their fitness score. Arguments to this function 
+# 	should include a list of Members and an integer to determine how 
+# 	many Members are selected. This function should return a ranked/
+# 	ordered list of Members. The probability of a ranked Member being
+#	chosen is determined using a reverse exponential function (see
+# 	'next_generation' method). By default, the selection function is
+#	configured to rank the Members by lowest fitness score.
 #
 
 # Third party packages (open src.)
@@ -14,6 +29,9 @@ import random
 import numpy as np
 import types
 from operator import add, sub
+
+# PyGenetics source files
+from pygenetics import selection_functions
 
 '''
 Population object: contains parameters to tune, members of each generation
@@ -24,7 +42,7 @@ class Population:
 	Initialize the population with a population size *size*, a *cost_fn* to
 	run for each member, and a *select_fn* to select/order member performance
 	'''
-	def __init__(self, size, cost_fn, select_fn):
+	def __init__(self, size, cost_fn, select_fn = selection_functions.minimize_best_n):
 
 		if size <= 0:
 			raise ValueError('ERROR: population size cannot be <= 0!')
@@ -86,7 +104,7 @@ class Population:
 	def generate_population(self):
 
 		# For each new member of the new population:
-		for member in range(self.pop_size):
+		for _ in range(self.pop_size):
 
 			# Construct a parameter feed_dict for the member
 			feed_dict = {}
@@ -124,7 +142,7 @@ class Population:
 		self.members = []
 
 		# For each new population member (pop_size total members)
-		for member in range(self.pop_size):
+		for _ in range(self.pop_size):
 
 			# Select each parent using calculated probabilities
 			parent_1 = np.random.choice(selected_members, p = member_chosen_probs)
