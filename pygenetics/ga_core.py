@@ -33,16 +33,16 @@ from operator import add, sub
 # PyGenetics source files
 from pygenetics import selection_functions
 
-'''
-Population object: contains parameters to tune, members of each generation
-'''
 class Population:
+	'''
+	Population object: contains parameters to tune, members of each generation
+	'''
 
-	'''
-	Initialize the population with a population size *size*, a *cost_fn* to
-	run for each member, and a *select_fn* to select/order member performance
-	'''
 	def __init__(self, size, cost_fn, select_fn = selection_functions.minimize_best_n):
+		'''
+		Initialize the population with a population size *size*, a *cost_fn* to
+		run for each member, and a *select_fn* to select/order member performance
+		'''
 
 		if size <= 0:
 			raise ValueError('ERROR: population size cannot be <= 0!')
@@ -56,18 +56,18 @@ class Population:
 		self.parameters = []
 		self.members = []
 
-	'''
-	len(Population) = number of members
-	'''
 	def __len__(self):
+		'''
+		len(Population) = number of members
+		'''
 
 		return len(self.members)
 
-	'''
-	Parameter object: created by "add_parameter"; stores relevant parameter
-	attributes
-	'''
 	class Parameter:
+		'''
+		Parameter object: created by "add_parameter"; stores relevant parameter
+		attributes
+		'''
 
 		def __init__(self, name, min_val, max_val):
 
@@ -78,30 +78,30 @@ class Population:
 			if self.dtype is not int and self.dtype is not float:
 				raise ValueError('ERROR: unsupported paramter data type (must be int or float)!')
 
-	'''
-	Member object: holds a *feed_dict* with unique values for each population
-	Parameter and a *fitness_score* calculated using the population's *cost_fn*
-	'''
 	class Member:
+		'''
+		Member object: holds a *feed_dict* with unique values for each population
+		Parameter and a *fitness_score* calculated using the population's *cost_fn*
+		'''
 
 		def __init__(self, feed_dict, fitness_score):
 
 			self.feed_dict = feed_dict
 			self.fitness_score = fitness_score
 
-	'''
-	Adds a parameter to the list of parameters with name *name*, a minimum 
-	possible value *min_val*, and a maximum possible value *max_val*
-	'''
 	def add_parameter(self, name, min_val, max_val):
+		'''
+		Adds a parameter to the list of parameters with name *name*, a minimum 
+		possible value *min_val*, and a maximum possible value *max_val*
+		'''
 
 		self.parameters.append(self.Parameter(name, min_val, max_val))
 
-	'''
-	Generates initial pop_size members (generation 0) for the population using
-	randomly calculated parameter values within parameter value range
-	'''
 	def generate_population(self):
+		'''
+		Generates initial pop_size members (generation 0) for the population using
+		randomly calculated parameter values within parameter value range
+		'''
 
 		# For each new member of the new population:
 		for _ in range(self.pop_size):
@@ -121,13 +121,13 @@ class Population:
 			# Append the new member to population's list of members
 			self.members.append(self.Member(feed_dict, fitness_score))
 
-	'''
-	Produces a new population generation using *num_survivors* members
-	obtained through the population's select_fn (select_fn returns an
-	ordered list of members, e.g. top performers). Optional arguments
-	for mutation rate *mut_rate*, and maximum mutation amount *max_mut_amt*
-	'''
 	def next_generation(self, num_survivors, mut_rate = 0.1, max_mut_amt = 0.1):
+		'''
+		Produces a new population generation using *num_survivors* members
+		obtained through the population's select_fn (select_fn returns an
+		ordered list of members, e.g. top performers). Optional arguments
+		for mutation rate *mut_rate*, and maximum mutation amount *max_mut_amt*
+		'''
 
 		# Obtain sorted list of *num_survivors* members using population's select_fn
 		selected_members = self.select_fn(self.members, num_survivors)
@@ -170,12 +170,12 @@ class Population:
 			# Append new member to population's member list
 			self.members.append(self.Member(feed_dict, fitness_score))
 
-	'''
-	Private, static method: returns a random parameter value in
-	range [min_val, max_val] of type *dtype*
-	'''
 	@staticmethod
 	def __random_param_val(min_val, max_val, dtype):
+		'''
+		Private, static method: returns a random parameter value in
+		range [min_val, max_val] of type *dtype*
+		'''
 		if dtype is int:
 			return random.randint(min_val, max_val)
 		elif dtype is float:
@@ -183,13 +183,13 @@ class Population:
 		else:
 			return 0
 
-	'''
-	Private, static method: mutates a parameter *param*; chance
-	of mutation dependent on *mut_rate*, maximum range of change
-	dependent on *max_mut_amt*
-	'''
 	@staticmethod
 	def __mutate_parameter(value, param, mut_rate, max_mut_amt):
+		'''
+		Private, static method: mutates a parameter *param*; chance
+		of mutation dependent on *mut_rate*, maximum range of change
+		dependent on *max_mut_amt*
+		'''
 
 		# Determine if mutation occurs:
 		if random.uniform(0, 1) < mut_rate:
