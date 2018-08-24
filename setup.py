@@ -1,12 +1,14 @@
 from setuptools import setup
 
-setup(name = 'pygenetics',
-version = "0.2.2",
-description = 'Genetic algorithm framework for arbitrary cost and selection algorithms',
-url = 'http://github.com/tjkessler/pygenetics',
-author = 'Travis Kessler',
-author_email = 'travis.j.kessler@gmail.com',
-license = 'MIT',
-packages = ['pygenetics'],
-install_requires = ['numpy'],
-zip_safe = False)
+setup(
+    name='pygenetics',
+    version='0.3',
+    description='Genetic algorithm framework for arbitrary cost functions',
+    url='http://github.com/tjkessler/pygenetics',
+    author='Travis Kessler',
+    author_email='travis.j.kessler@gmail.com',
+    license='MIT',
+    packages=['pygenetics'],
+    install_requires=['numpy'],
+    zip_safe=False
+)
