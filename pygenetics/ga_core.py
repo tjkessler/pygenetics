@@ -81,6 +81,17 @@ class Population:
 
         return self.pop_size
 
+    @property
+    def fitness(self):
+        '''
+        Population fitness == average member fitness score
+        '''
+
+        if len(self.members) != 0:
+            return sum(m.fitness_score for m in self.members)/len(self.members)
+        else:
+            return None
+
     def add_parameter(self, name, min_val, max_val):
         '''
         Adds a paramber to the list of population parameters to tune, with name
