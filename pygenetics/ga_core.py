@@ -48,6 +48,10 @@ class Member:
         self.feed_dict = feed_dict
         self.fitness_score = fitness_score
 
+    @property
+    def param_vals(self):
+        return self.feed_dict
+
 
 class Population:
     '''
@@ -89,6 +93,23 @@ class Population:
 
         if len(self.members) != 0:
             return sum(m.fitness_score for m in self.members)/len(self.members)
+        else:
+            return None
+
+    @property
+    def param_vals(self):
+        '''
+        Population parameter vals == average member parameter vals
+        '''
+
+        if len(self.members) != 0:
+            params = {}
+            for p in self.parameters:
+                params[p.name] = sum(
+                    m.feed_dict[p.name] for m in self.members)/len(
+                        self.members
+                    )
+            return params
         else:
             return None
 
