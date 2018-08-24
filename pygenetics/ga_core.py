@@ -115,7 +115,7 @@ class Population:
             fitness_score = self.cost_fn(feed_dict)
             self.members.append(Member(feed_dict, fitness_score))
 
-    def next_generation(self, num_survivors, mut_rate=0.1, max_mut_amt=0.1):
+    def next_generation(self, num_survivors, mut_rate=0, max_mut_amt=0):
         '''
         Generates self.pop_size new Members using *num_survivors* Members
         from the previous population selected using self.select_fn (selection
