@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# selection_functions.py
+# selection_functions.py (0.4.0)
 #
 # Developed in 2018 by Travis Kessler <travis.j.kessler@gmail.com>
+#
 
 
 def minimize_best_n(Members, n):
