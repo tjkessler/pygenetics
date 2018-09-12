@@ -1,3 +1,3 @@
-import pygenetics.ga_core
+from pygenetics.ga_core import Population
 import pygenetics.selection_functions
-__version__ = '0.3'
+__version__ = '0.4.0'
