@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# ga_core.py (0.4.0)
+# ga_core.py (0.4.1)
 #
 # Developed in 2018 by Travis Kessler <travis.j.kessler@gmail.com>
 #
@@ -67,13 +67,15 @@ class Population:
     of population members
     '''
 
-    def __init__(self, size, cost_fn, num_processes=4,
+    def __init__(self, size, cost_fn, cost_fn_args=None, num_processes=4,
                  select_fn=selection_functions.minimize_best_n):
         '''
         Initialize the population
 
         *size*          -   population size (number of members)
         *cost_fn*       -   function used to evaluate population member fitness
+        *cost_fn_args*  -   Additional arbitrary arguments for supplied cost
+                            function; passed to cost function after feed_dict
         *num_processes* -   if > 0, will utilize multiprocessing for member
                             generation
         *select_fn*     -   function used to order population members for next
@@ -88,6 +90,7 @@ class Population:
         self.__cost_fn = cost_fn
         if not callable(select_fn):
             raise ValueError('Supplied *select_fn* is not callable')
+        self.__cost_fn_args = cost_fn_args
         self.__select_fn = select_fn
         self.__parameters = []
         self.__members = []
@@ -177,11 +180,15 @@ class Population:
                 )
             if self.__num_processes > 0:
                 self.__members.append(process_pool.apply_async(
-                    self._start_process, [self.__cost_fn, feed_dict])
+                    self._start_process,
+                    [self.__cost_fn, feed_dict, self.__cost_fn_args])
                 )
             else:
                 self.__members.append(
-                    Member(feed_dict, self.__cost_fn(feed_dict))
+                    Member(
+                        feed_dict,
+                        self.__cost_fn(feed_dict, self.__cost_fn_args)
+                    )
                 )
 
         if self.__num_processes > 0:
@@ -236,11 +243,15 @@ class Population:
 
             if self.__num_processes > 0:
                 self.__members.append(process_pool.apply_async(
-                    self._start_process, [self.__cost_fn, feed_dict])
+                    self._start_process,
+                    [self.__cost_fn, feed_dict, self.__cost_fn_args])
                 )
             else:
                 self.__members.append(
-                    Member(feed_dict, self.__cost_fn(feed_dict))
+                    Member(
+                        feed_dict,
+                        self.__cost_fn(feed_dict, self.__cost_fn_args)
+                    )
                 )
 
         if self.__num_processes > 0:
@@ -248,13 +259,13 @@ class Population:
             process_pool.join()
 
     @staticmethod
-    def _start_process(cost_fn, feed_dict):
+    def _start_process(cost_fn, feed_dict, cost_fn_args):
         '''
         Static method: starts a process to generate (evaluate) a new Member
         with parameter values in *feed_dict*
         '''
 
-        return Member(feed_dict, cost_fn(feed_dict))
+        return Member(feed_dict, cost_fn(feed_dict, cost_fn_args))
 
     @staticmethod
     def __random_param_val(min_val, max_val, dtype):
