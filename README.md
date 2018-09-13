@@ -23,9 +23,9 @@ To get started, import the **Population** object:
 ```python
 from pygenetics.ga_core import Population
 ```
-Now we need a cost function with parameters to optimize. PyGenetics only requires that the function accepts a **feed_dict** argument, a dictionary of parameter names and corresponding values, and that it returns a numerical measurement of the function's performance (its **fitness score**). For example, let's create a function to return the sum of all integers found in the **feed_dict**:
+Now we need a cost function with parameters to optimize. PyGenetics only requires that the function accepts a **feed_dict** argument, a dictionary of parameter names and corresponding values, additional arbitrary arguments that are used by the cost function **cost_fn_args** (can be in any form, list, dict, etc, depending on the functionality of the supplied cost function), and that it returns a numerical measurement of the function's performance (its **fitness score**). For example, let's create a function to return the sum of all integers found in the **feed_dict**:
 ```python
-def sum_of_integers(feed_dict):
+def sum_of_integers(feed_dict, cost_fn_args=None):
     sum = 0
     for integer in feed_dict:
         sum += feed_dict[integer]
@@ -78,6 +78,11 @@ We can also look at the parameter values for an individual population member:
 ```python
 print(pop.members[0].param_vals)
 >>> {'first_integer': 0, 'second_integer': 0, 'third_integer': 0}
+```
+And its fitness score:
+```python
+print(pop.members[0].fitness_score)
+>>> 0
 ```
 For downloadable example python scripts, visit our [examples directory](https://github.com/tjkessler/PyGenetics/tree/master/examples).
 
