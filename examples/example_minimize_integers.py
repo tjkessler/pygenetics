@@ -7,7 +7,7 @@ from pygenetics import Population
 
 # Cost function; finds the sum of integers in feed_dict
 #   (fitness score = sum)
-def sum_of_integers(feed_dict):
+def sum_of_integers(feed_dict, cost_fn_args=None):
     sum = 0
     for integer in feed_dict:
         sum += feed_dict[integer]
