@@ -25,7 +25,7 @@ Note: if multiple Python releases are installed on your system (e.g. 2.7 and 3.6
 ## Usage
 To get started, import the **Population** object:
 ```python
-from pygenetics.ga_core import Population
+from pygenetics import Population
 ```
 Now we need a cost function with parameters to optimize. PyGenetics only requires that the function accepts a **feed_dict** argument, a dictionary of parameter names and corresponding values, additional arbitrary arguments that are used by the cost function **cost_fn_args** (can be in any form, list, dict, etc, depending on the functionality of the supplied cost function), and that it returns a numerical measurement of the function's performance (its **fitness score**). For example, let's create a function to return the sum of all integers found in the **feed_dict**:
 ```python
