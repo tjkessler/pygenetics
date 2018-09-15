@@ -18,6 +18,10 @@ pip install pygenetics
 ```
 Note: if multiple Python releases are installed on your system (e.g. 2.7 and 3.6), you may need to execute the correct version of pip. For Python 3.X, change **pip install pygenetics** to **pip3 install pygenetics**.
 
+### Method 2: From source
+- Download the PyGenetics repository, navigate to the download location on the command line/terminal, and execute 
+**"python setup.py install"**. 
+
 ## Usage
 To get started, import the **Population** object:
 ```python
