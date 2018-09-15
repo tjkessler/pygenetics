@@ -16,7 +16,7 @@ If your Python install contains pip:
 ```
 pip install pygenetics
 ```
-Note: if multiple Python releases are installed on your system (e.g. 2.7 and 3.6), you may need to execute the correct version of pip. For Python 3.X, change **pip install ecnet** to **pip3 install ecnet**.
+Note: if multiple Python releases are installed on your system (e.g. 2.7 and 3.6), you may need to execute the correct version of pip. For Python 3.X, change **pip install pygenetics** to **pip3 install pygenetics**.
 
 ## Usage
 To get started, import the **Population** object:
