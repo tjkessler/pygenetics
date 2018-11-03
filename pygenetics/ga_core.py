@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# ga_core.py (0.4.1)
+# ga_core.py (0.5.1)
 #
 # Developed in 2018 by Travis Kessler <travis.j.kessler@gmail.com>
 #
@@ -139,7 +139,7 @@ class Population:
             params = {}
             for p in self.__parameters:
                 params[p.name] = sum(
-                    m.feed_dict[p.name] for m in members
+                    m.parameters[p.name] for m in members
                 )/len(members)
             return params
         else:
@@ -229,7 +229,7 @@ class Population:
             )
 
         selected_members = self.__select_fn(members)
-        reproduction_probs = list(reversed(logsplace(0.0, 1.0,
+        reproduction_probs = list(reversed(logspace(0.0, 1.0,
                                   num=len(selected_members), base=log_base)))
         reproduction_probs = reproduction_probs / sum(reproduction_probs)
 
@@ -243,9 +243,9 @@ class Population:
             for param in self.__parameters:
                 which_parent = uniform(0, 1)
                 if which_parent < 0.5:
-                    feed_dict[param.name] = parent_1.feed_dict[param.name]
+                    feed_dict[param.name] = parent_1.parameters[param.name]
                 else:
-                    feed_dict[param.name] = parent_2.feed_dict[param.name]
+                    feed_dict[param.name] = parent_2.parameters[param.name]
                 feed_dict[param.name] = self.__mutate_parameter(
                     feed_dict[param.name], param, mut_rate, max_mut_amt
                 )
