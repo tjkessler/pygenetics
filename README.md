@@ -43,7 +43,7 @@ By default, the genetic algorithm will **minimize** the supplied cost function; 
 ```python
 pop = Population(100, sum_of_integers, select_fn=my_selection_function)
 ```
-Essentially, a supplied selection function should accept a list of unordered population members, how many population members to select, and return an ordered list of population members - for some inspiration, view our [pre-built selection functions](https://github.com/tjkessler/PyGenetics/blob/master/pygenetics/selection_functions.py).
+Essentially, a supplied selection function should accept a list of unordered population members, and return an ordered list of population members - for some inspiration, view our [pre-built selection functions](https://github.com/tjkessler/PyGenetics/blob/master/pygenetics/selection_functions.py).
 
 So our population is defined, but we still need to add some parameters to optimize. For our integer summation cost function, let's add three integers randomly initialized between 0 and 10:
 ```python
@@ -57,36 +57,46 @@ pop.generate_population()
 ```
 Let's take a look at the population's average fitness:
 ```python
-print(pop.fitness)
->>> 15.52
+>>> print(pop.fitness)
+15.52
 ```
 Our goal is to minimize the supplied parameters, so we want this value to be as close to 0 as possible. Let's repopulate our population for 6 generations, selecting the best 50 population members from each generation to produce the next generation's 100:
 ```python
-for _ in range(6):
-    pop.next_generation(50)
-    print(pop.fitness)
+>>> for _ in range(6):
+>>>     pop.next_generation(50)
+>>>     print(pop.fitness)
     
->>> 9.78
->>> 5.71
->>> 2.43
->>> 0.91
->>> 0.1
->>> 0.0
+5.71
+2.43
+9.78
+0.91
+0.1
+0.0
 ```
+We can introduce a mutation rate (chance for any of a new population member's parameters to mutate) and a maximum mutation amount (allowed percentage change of the parameter, within the bounds of the parameter's minimum and maximum allowed values):
+```python
+pop.next_generation(50, mut_rate=0.05, max_mut_amt=0.2)
+```
+And change the distribution of chosen parent probabilities (reverse logspace proportions):
+```python
+pop.next_generation(50, log_base=20)
+```
+A higher 'log_base' results in members ordered first by the selection function to have a higher chance of being chosen as parents for the next generation.
+
 Our parameters look optimized - here are the population's average parameter values:
 ```python
-print(pop.param_vals)
->>> {'first_integer': 0.0, 'second_integer': 0.0, 'third_integer': 0.0}
+>>> print(pop.parameters)
+{'first_integer': 0.0, 'second_integer': 0.0, 'third_integer': 0.0}
 ```
 We can also look at the parameter values for an individual population member:
 ```python
-print(pop.members[0].param_vals)
->>> {'first_integer': 0, 'second_integer': 0, 'third_integer': 0}
+>>> print(pop.members[0].parameters)
+{'first_integer': 0, 'second_integer': 0, 'third_integer': 0}
 ```
 And its fitness score:
 ```python
-print(pop.members[0].fitness_score)
->>> 0
+>>> print(pop.members[0].fitness_score)
+0
 ```
 For downloadable example python scripts, visit our [examples directory](https://github.com/tjkessler/PyGenetics/tree/master/examples).
 
