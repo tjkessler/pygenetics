@@ -6,30 +6,36 @@
 # Developed in 2018 by Travis Kessler <travis.j.kessler@gmail.com>
 #
 
-# Third party open source packages
-import random
-import numpy as np
-import types
+# Stdlib imports
+from random import choice, randint, uniform
 from operator import add, sub
-import multiprocessing as mp
+from multiprocessing import Pool
+
+# Third party open source packages
+from numpy import logspace, random as nrandom
 
 # PyGenetics library imports
-from pygenetics import selection_functions
+from pygenetics.selection_functions import minimize_best_n
 
 # Supported parameter types and functions to generate random initial values
 SUPPORTED_DTYPES = {
-    int: random.randint,
-    float: random.uniform
+    int: randint,
+    float: uniform
 }
 
 
 class Parameter:
-    '''
-    Parameter object; contains *name* of the parameter to tune, its minimum
-    value *min_val* and its maximum value *max_val*
-    '''
 
     def __init__(self, name, min_val, max_val):
+        '''
+        Parameter object
+
+        Args:
+            name (str): name of the parameter
+            min_val (int or float): minimum allowed value for the parameter
+            max_val (int or float): maximum allowed value for the parameter
+        '''
+
         self.name = name
         self.min_val = min_val
         self.max_val = max_val
@@ -46,19 +52,19 @@ class Parameter:
 
 
 class Member:
-    '''
-    Member object: contains a *feed_dict* (dictionary of parameter names and
-    unique values for the member) and a *fitness_score* calcutated using the
-    population's cost function
-    '''
 
-    def __init__(self, feed_dict, fitness_score):
-        self.feed_dict = feed_dict
+    def __init__(self, parameters, fitness_score):
+        '''
+        Member object
+
+        Args:
+            parameters (dictionary): dictionary of parameter names and values
+            fitness_score (float): fitness score generated from parameters in
+                                   parameters
+        '''
+
+        self.parameters = parameters
         self.fitness_score = fitness_score
-
-    @property
-    def param_vals(self):
-        return self.feed_dict
 
 
 class Population:
@@ -68,18 +74,19 @@ class Population:
     '''
 
     def __init__(self, size, cost_fn, cost_fn_args=None, num_processes=4,
-                 select_fn=selection_functions.minimize_best_n):
+                 select_fn=minimize_best_n):
         '''
-        Initialize the population
+        Initialize the Population object
 
-        *size*          -   population size (number of members)
-        *cost_fn*       -   function used to evaluate population member fitness
-        *cost_fn_args*  -   Additional arbitrary arguments for supplied cost
-                            function; passed to cost function after feed_dict
-        *num_processes* -   if > 0, will utilize multiprocessing for member
-                            generation
-        *select_fn*     -   function used to order population members for next
-                            generation
+        Args:
+            size (int): number of Members in the population
+            cost_fn (callable): function used to evaluate member fitness
+            cost_fn_args (iterable or dict): additional user-specified
+                                             arguments to pass to cost_fn
+            num_processes (int): number of concurrent processes to run for
+                                 Member generation/evaluation
+            select_fn (callable): function used to sort members for parent
+                                  based on member fitness score
         '''
 
         if size <= 0:
@@ -119,7 +126,7 @@ class Population:
             return None
 
     @property
-    def param_vals(self):
+    def parameters(self):
         '''
         Population parameter vals == average member parameter vals
         '''
@@ -141,7 +148,7 @@ class Population:
     @property
     def members(self):
         '''
-        Returns Member objects from population
+        Returns Member objects of population
         '''
 
         if self.__num_processes > 0:
@@ -151,11 +158,12 @@ class Population:
 
     def add_parameter(self, name, min_val, max_val):
         '''
-        Adds a paramber to the list of population parameters to tune
+        Adds a paramber to the Population
 
-        *name*      -   name of the parameter
-        *min_val*   -   minimum allowed value of the parameter
-        *max_val*   -   maximum allowed value of the parameter
+        Args:
+            name (str): name of the parameter
+            min_val (int or float): minimum value for the parameter
+            max_val (int or float): maximum value for the parameter
         '''
 
         self.__parameters.append(Parameter(name, min_val, max_val))
@@ -167,7 +175,7 @@ class Population:
         '''
 
         if self.__num_processes > 0:
-            process_pool = mp.Pool(processes=self.__num_processes)
+            process_pool = Pool(processes=self.__num_processes)
         self.__members = []
 
         for _ in range(self.__pop_size):
@@ -195,21 +203,22 @@ class Population:
             process_pool.close()
             process_pool.join()
 
-    def next_generation(self, num_survivors, mut_rate=0, max_mut_amt=0):
+    def next_generation(self, mut_rate=0, max_mut_amt=0, log_base=10):
         '''
         Generates the next population from a previously evaluated generation
 
-        *num_survivors*     -   number of top performers (from self.select_fn)
-                                to generate the next population from
-        *mut_rate*          -   chance for each new population member to mutate
-                                (between 0 and 1)
-        *max_mut_amt*       -   if new member is mutating, maximum possible
-                                change amount (between 0 and 1, is multiplied
-                                by max param val - min param val)
+        Args:
+            mut_rate (float): mutation rate for new members (0.0 - 1.0)
+            max_mut_amt (float): how much the member is allowed to mutate
+                                 (0.0 - 1.0, proportion change of mutated
+                                 parameter)
+            log_base (int): the higher this number, the more likely the first
+                            Members (chosen with supplied selection function)
+                            are chosen as parents for the next generation
         '''
 
         if self.__num_processes > 0:
-            process_pool = mp.Pool(processes=self.__num_processes)
+            process_pool = Pool(processes=self.__num_processes)
             members = [m.get() for m in self.__members]
         else:
             members = self.__members
@@ -219,20 +228,20 @@ class Population:
                 'Generation 0 not found: use generate_population() first'
             )
 
-        selected_members = self.__select_fn(members, num_survivors)
-        reproduction_probs = list(reversed(np.logspace(0.0, 1.0,
-                                  num=num_survivors, base=10)))
+        selected_members = self.__select_fn(members)
+        reproduction_probs = list(reversed(logsplace(0.0, 1.0,
+                                  num=len(selected_members), base=log_base)))
         reproduction_probs = reproduction_probs / sum(reproduction_probs)
 
         self.__members = []
 
         for _ in range(self.__pop_size):
-            parent_1 = np.random.choice(selected_members, p=reproduction_probs)
-            parent_2 = np.random.choice(selected_members, p=reproduction_probs)
+            parent_1 = nrandom.choice(selected_members, p=reproduction_probs)
+            parent_2 = nrandom.choice(selected_members, p=reproduction_probs)
 
             feed_dict = {}
             for param in self.__parameters:
-                which_parent = random.uniform(0, 1)
+                which_parent = uniform(0, 1)
                 if which_parent < 0.5:
                     feed_dict[param.name] = parent_1.feed_dict[param.name]
                 else:
@@ -262,7 +271,14 @@ class Population:
     def _start_process(cost_fn, feed_dict, cost_fn_args):
         '''
         Static method: starts a process to generate (evaluate) a new Member
-        with parameter values in *feed_dict*
+
+        Args:
+            cost_fn (function): cost function supplied to the Population
+            feed_dict (dictionary): dictionary of Parameter objects
+            cost_fn_args (iterable or dict): user-supplied args for cost_fn
+
+        Returns:
+            Evaluated Member object
         '''
 
         return Member(feed_dict, cost_fn(feed_dict, cost_fn_args))
@@ -270,8 +286,15 @@ class Population:
     @staticmethod
     def __random_param_val(min_val, max_val, dtype):
         '''
-        Private, static method: returns a random value between *min_val* and
-        *max_val* of type *dtype*
+        Private, static method: returns a random value
+
+        Args:
+            min_val (int or float): minimum value for random value
+            max_Val (int or float): maximum value for random vlaue
+            dtype (type): type of random value, int or float
+
+        Returns:
+            int or float: random value
         '''
 
         return SUPPORTED_DTYPES[dtype](min_val, max_val)
@@ -279,13 +302,21 @@ class Population:
     @staticmethod
     def __mutate_parameter(value, param, mut_rate, max_mut_amt):
         '''
-        Private, static method: mutates a *param*'s *value*; chance of mutation
-        depends on *mut_rate*, maximum change amount depends on *max_mut_amt*
+        Private, static method: mutates parameter
+
+        Args:
+            value (int or float): current value for Member's parameter
+            param (Parameter): parameter object
+            mut_rate (float): mutation rate of the value
+            max_mut_amt (float): maximum mutation amount of the value
+
+        Returns:
+            int or float: mutated value
         '''
 
-        if random.uniform(0, 1) < mut_rate:
-            mut_amt = random.uniform(0, max_mut_amt)
-            op = random.choice((add, sub))
+        if uniform(0, 1) < mut_rate:
+            mut_amt = uniform(0, max_mut_amt)
+            op = choice((add, sub))
             new_val = op(value, param.dtype(
                 (param.max_val - param.min_val) * mut_amt
             ))
