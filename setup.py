@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='pygenetics',
-    version='0.5.0',
+    version='0.5.1',
     description='Genetic algorithm framework for arbitrary cost functions',
     url='http://github.com/tjkessler/pygenetics',
     author='Travis Kessler',

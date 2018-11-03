@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# selection_functions.py (0.5.0)
+# selection_functions.py (0.5.1)
 #
 # Developed in 2018 by Travis Kessler <travis.j.kessler@gmail.com>
 #
