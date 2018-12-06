@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# ga_core.py (0.5.1)
+# ga_core.py (0.5.2)
 #
 # Developed in 2018 by Travis Kessler <travis.j.kessler@gmail.com>
 #
@@ -60,7 +60,7 @@ class Member:
         Args:
             parameters (dictionary): dictionary of parameter names and values
             fitness_score (float): fitness score generated from parameters in
-                                   parameters
+                parameters
         '''
 
         self.parameters = parameters
@@ -68,25 +68,22 @@ class Member:
 
 
 class Population:
-    '''
-    Population object: tunes specified parameters by measuring the performance
-    of population members
-    '''
 
     def __init__(self, size, cost_fn, cost_fn_args=None, num_processes=4,
                  select_fn=minimize_best_n):
         '''
-        Initialize the Population object
+        Population object: tunes specified parameters by measuring the
+        performance of population members
 
         Args:
             size (int): number of Members in the population
             cost_fn (callable): function used to evaluate member fitness
             cost_fn_args (iterable or dict): additional user-specified
-                                             arguments to pass to cost_fn
+                arguments to pass to cost_fn
             num_processes (int): number of concurrent processes to run for
-                                 Member generation/evaluation
+                Member generation/evaluation
             select_fn (callable): function used to sort members for parent
-                                  based on member fitness score
+                based on member fitness score
         '''
 
         if size <= 0:
@@ -117,7 +114,7 @@ class Population:
         '''
 
         if len(self.__members) != 0:
-            if self.__num_processes > 0:
+            if self.__num_processes > 1:
                 members = [self.__members.get() for p in self.__processes]
             else:
                 members = self.__members
@@ -132,7 +129,7 @@ class Population:
         '''
 
         if len(self.__members) != 0:
-            if self.__num_processes > 0:
+            if self.__num_processes > 1:
                 members = [self.__members.get() for p in self.__processes]
             else:
                 members = self.__members
@@ -151,7 +148,7 @@ class Population:
         Returns Member objects of population
         '''
 
-        if self.__num_processes > 0:
+        if self.__num_processes > 1:
             return [m.get() for m in self.__members]
         else:
             return self.__members
@@ -174,7 +171,7 @@ class Population:
         for each parameter added with add_parameter(), evaluates their fitness
         '''
 
-        if self.__num_processes > 0:
+        if self.__num_processes > 1:
             process_pool = Pool(processes=self.__num_processes)
         self.__members = []
 
@@ -186,7 +183,7 @@ class Population:
                     param.max_val,
                     param.dtype
                 )
-            if self.__num_processes > 0:
+            if self.__num_processes > 1:
                 self.__members.append(process_pool.apply_async(
                     self._start_process,
                     [self.__cost_fn, feed_dict, self.__cost_fn_args])
@@ -199,7 +196,7 @@ class Population:
                     )
                 )
 
-        if self.__num_processes > 0:
+        if self.__num_processes > 1:
             process_pool.close()
             process_pool.join()
 
@@ -210,14 +207,13 @@ class Population:
         Args:
             mut_rate (float): mutation rate for new members (0.0 - 1.0)
             max_mut_amt (float): how much the member is allowed to mutate
-                                 (0.0 - 1.0, proportion change of mutated
-                                 parameter)
+                (0.0 - 1.0, proportion change of mutated parameter)
             log_base (int): the higher this number, the more likely the first
-                            Members (chosen with supplied selection function)
-                            are chosen as parents for the next generation
+                Members (chosen with supplied selection function) are chosen
+                as parents for the next generation
         '''
 
-        if self.__num_processes > 0:
+        if self.__num_processes > 1:
             process_pool = Pool(processes=self.__num_processes)
             members = [m.get() for m in self.__members]
         else:
@@ -250,7 +246,7 @@ class Population:
                     feed_dict[param.name], param, mut_rate, max_mut_amt
                 )
 
-            if self.__num_processes > 0:
+            if self.__num_processes > 1:
                 self.__members.append(process_pool.apply_async(
                     self._start_process,
                     [self.__cost_fn, feed_dict, self.__cost_fn_args])
@@ -263,7 +259,7 @@ class Population:
                     )
                 )
 
-        if self.__num_processes > 0:
+        if self.__num_processes > 1:
             process_pool.close()
             process_pool.join()
 
