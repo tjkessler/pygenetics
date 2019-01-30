@@ -27,8 +27,7 @@ SUPPORTED_DTYPES = {
 class Parameter:
 
     def __init__(self, name, min_val, max_val):
-        '''
-        Parameter object
+        '''Parameter object
 
         Args:
             name (str): name of the parameter
@@ -53,26 +52,40 @@ class Parameter:
 
 class Member:
 
-    def __init__(self, parameters, fitness_score):
-        '''
-        Member object
+    def __init__(self, parameters, cost_fn_val):
+        '''Member object
 
         Args:
             parameters (dictionary): dictionary of parameter names and values
-            fitness_score (float): fitness score generated from parameters in
-                parameters
+            cost_fn_val (float): value returned by cost function using params
         '''
 
         self.parameters = parameters
-        self.fitness_score = fitness_score
+        self.cost_fn_val = cost_fn_val
+        self.fitness_score = self.__calc_fitness_score(cost_fn_val)
+
+    @staticmethod
+    def __calc_fitness_score(cost_fn_val):
+        '''Derives fitness score from cost function return value
+
+        Args:
+            cost_fn_val (float): value returned by cost function
+
+        Returns:
+            float: standardized fitness score
+        '''
+
+        if cost_fn_val >= 0:
+            return 1 / (cost_fn_val + 1)
+        else:
+            return 1 + abs(cost_fn_val)
 
 
 class Population:
 
-    def __init__(self, size, cost_fn, cost_fn_args=None, num_processes=4,
+    def __init__(self, size, cost_fn, cost_fn_args=None, num_processes=1,
                  select_fn=minimize_best_n):
-        '''
-        Population object: tunes specified parameters by measuring the
+        '''Population object: tunes specified parameters by measuring the
         performance of population members
 
         Args:
@@ -100,53 +113,79 @@ class Population:
         self.__members = []
         self.__num_processes = num_processes
 
+        self.__best_fitness = None
+        self.__best_cost_fn_val = None
+        self.__best_parameters = None
+
     def __len__(self):
-        '''
-        len(Population) == population size
-        '''
+        '''len(Population) == population size'''
 
         return self.__pop_size
 
     @property
     def fitness(self):
-        '''
-        Population fitness == average member fitness score
-        '''
+        '''Population fitness == average member fitness score'''
 
         if len(self.__members) != 0:
             if self.__num_processes > 1:
-                members = [self.__members.get() for p in self.__processes]
+                members = [m.get() for m in self.__members]
             else:
                 members = self.__members
-            return sum(m.fitness_score for m in members)/len(members)
+            return sum(m.fitness_score for m in members) / len(members)
         else:
             return None
 
     @property
-    def parameters(self):
-        '''
-        Population parameter vals == average member parameter vals
-        '''
+    def best_fitness(self):
+        '''Fitness score of best performing population member so far'''
+
+        return self.__best_fitness
+
+    @property
+    def ave_cost_fn_val(self):
+        '''Returns average cost function return value for all members'''
 
         if len(self.__members) != 0:
             if self.__num_processes > 1:
-                members = [self.__members.get() for p in self.__processes]
+                members = [m.get() for m in self.__members]
+            else:
+                members = self.__members
+            return sum(m.cost_fn_val for m in members) / len(members)
+        else:
+            return None
+
+    @property
+    def best_cost_fn_val(self):
+
+        return self.__best_cost_fn_val
+
+    @property
+    def parameters(self):
+        '''Population parameter vals == average member parameter vals'''
+
+        if len(self.__members) != 0:
+            if self.__num_processes > 1:
+                members = [m.get() for m in self.__members]
             else:
                 members = self.__members
             params = {}
             for p in self.__parameters:
                 params[p.name] = sum(
                     m.parameters[p.name] for m in members
-                )/len(members)
+                ) / len(members)
             return params
         else:
             return None
 
     @property
+    def best_parameters(self):
+        '''Parameter values of best performing population member so far'''
+
+        return self.__best_parameters
+
+    @property
     def members(self):
-        '''
-        Returns Member objects of population
-        '''
+        '''Returns Member objects of population'''
 
         if self.__num_processes > 1:
             return [m.get() for m in self.__members]
@@ -154,8 +193,7 @@ class Population:
             return self.__members
 
     def add_parameter(self, name, min_val, max_val):
-        '''
-        Adds a paramber to the Population
+        '''Adds a paramber to the Population
 
         Args:
             name (str): name of the parameter
@@ -166,8 +204,7 @@ class Population:
         self.__parameters.append(Parameter(name, min_val, max_val))
 
     def generate_population(self):
-        '''
-        Generates self.__pop_size Members with randomly initialized values
+        '''Generates self.__pop_size Members with randomly initialized values
         for each parameter added with add_parameter(), evaluates their fitness
         '''
 
@@ -200,9 +237,10 @@ class Population:
             process_pool.close()
             process_pool.join()
 
+        self.__determine_best_member()
+
     def next_generation(self, mut_rate=0, max_mut_amt=0, log_base=10):
-        '''
-        Generates the next population from a previously evaluated generation
+        '''Generates the next population from a previously evaluated generation
 
         Args:
             mut_rate (float): mutation rate for new members (0.0 - 1.0)
@@ -263,10 +301,11 @@ class Population:
             process_pool.close()
             process_pool.join()
 
+        self.__determine_best_member()
+
     @staticmethod
     def _start_process(cost_fn, feed_dict, cost_fn_args):
-        '''
-        Static method: starts a process to generate (evaluate) a new Member
+        '''Static method: starts a process to generate (evaluate) a new Member
 
         Args:
             cost_fn (function): cost function supplied to the Population
@@ -297,8 +336,7 @@ class Population:
 
     @staticmethod
     def __mutate_parameter(value, param, mut_rate, max_mut_amt):
-        '''
-        Private, static method: mutates parameter
+        '''Private, static method: mutates parameter
 
         Args:
             value (int or float): current value for Member's parameter
@@ -324,3 +362,28 @@ class Population:
                 return new_val
         else:
             return value
+
+    def __determine_best_member(self):
+        '''Private method: determines if any current population members have a
+        fitness score better than the current best
+        '''
+
+        if self.__num_processes > 1:
+            members = [m.get() for m in self.__members]
+        else:
+            members = self.__members
+
+        if self.__best_fitness is None:
+            self.__best_fitness = members[0].fitness_score
+            self.__best_cost_fn_val = members[0].cost_fn_val
+            self.__best_parameters = {}
+            for p in self.__parameters:
+                self.__best_parameters[p.name] = members[0].parameters[p.name]
+
+        for m_id, member in enumerate(members):
+            if member.fitness_score > self.__best_fitness:
+                self.__best_fitness = member.fitness_score
+                self.__best_cost_fn_val = member.cost_fn_val
+                self.__best_parameters = {}
+                for p in self.__parameters:
+                    self.__best_parameters[p.name] = member.parameters[p.name]

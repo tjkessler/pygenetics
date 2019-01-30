@@ -18,19 +18,6 @@ def minimize_best_n(Members):
         lsit: ordered lsit of Members, from lowest to highest
     '''
 
-    return(sorted(Members, key=lambda Member: Member.fitness_score))
-
-
-def maximize_best_n(Members):
-    '''
-    Orders population members from highest fitness to lowest fitness
-
-    Args:
-        Members (list): list of PyGenetics Member objects
-
-    Returns:
-        list: ordered list of Members, from highest to lowest
-    '''
-
-    return(sorted(Members, key=lambda Member: Member.fitness_score,
-                  reverse=True))
+    return(list(reversed(sorted(
+        Members, key=lambda Member: Member.fitness_score
+    ))))
