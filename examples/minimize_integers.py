@@ -42,3 +42,4 @@ if __name__ == '__main__':
         print('Average population params: {}'.format(pop.parameters))
         print('Best cost function val: {}'.format(pop.best_cost_fn_val))
         print('Average cost function val: {}'.format(pop.ave_cost_fn_val))
+        print('Median cost function val: {}'.format(pop.med_cost_fn_val))
