@@ -2,8 +2,9 @@ from setuptools import setup
 
 setup(
     name='pygenetics',
-    version='0.5.2',
-    description='Genetic algorithm framework for arbitrary cost functions',
+    version='0.6.0',
+    description='Genetic algorithm framework for tuning arbitrary cost'
+                ' functions',
     url='http://github.com/tjkessler/pygenetics',
     author='Travis Kessler',
     author_email='travis.j.kessler@gmail.com',

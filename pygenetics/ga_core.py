@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# ga_core.py (0.5.2)
+# ga_core.py (0.6.0)
 #
-# Developed in 2018 by Travis Kessler <travis.j.kessler@gmail.com>
+# Developed in 2019 by Travis Kessler <travis.j.kessler@gmail.com>
 #
 
 # Stdlib imports
@@ -12,7 +12,7 @@ from operator import add, sub
 from multiprocessing import Pool
 
 # Third party open source packages
-from numpy import logspace, random as nrandom
+from numpy import logspace, median, random as nrandom
 
 # PyGenetics library imports
 from pygenetics.selection_functions import minimize_best_n
@@ -151,6 +151,19 @@ class Population:
             else:
                 members = self.__members
             return sum(m.cost_fn_val for m in members) / len(members)
+        else:
+            return None
+
+    @property
+    def med_cost_fn_val(self):
+        '''Returns median cost function return value for all members'''
+
+        if len(self.__members) != 0:
+            if self.__num_processes > 1:
+                members = [m.get() for m in self.__members]
+            else:
+                members = self.__members
+            return median([m.cost_fn_val for m in members])
         else:
             return None
 
