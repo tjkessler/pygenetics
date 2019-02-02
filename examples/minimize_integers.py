@@ -32,13 +32,14 @@ if __name__ == '__main__':
     # Run the genetic algorithm for 15 generations
     num_generations = 15
     for generation in range(num_generations):
-        # Generate the next generation, using top 5 performers,
-        #   a mutation rate of 20%, and a maximum mutation amount
-        #   of 20% (0.2 * 10, 10 = param max - param min)
-        pop.next_generation(5, mut_rate=0.2, max_mut_amt=0.2)
-
-    # Print the fitness score and parameter values for each member
-    for idx, member in enumerate(pop.members):
-        print('\nMember: ' + str(idx + 1))
-        print('Fitness Score: ' + str(member.fitness_score))
-        print('Parameters: ' + str(member.feed_dict))
+        # Generate the next generation, using a mutation rate of 20%, and a
+        #   maximum mutation amount of 20% (0.2 * 10, 10 = param max - param
+        #   min)
+        pop.next_generation(mut_rate=0.2, max_mut_amt=0.2)
+        print('\nBest member fitness: {}'.format(pop.best_fitness))
+        print('Average population fitness: {}'.format(pop.fitness))
+        print('Best member params: {}'.format(pop.best_parameters))
+        print('Average population params: {}'.format(pop.parameters))
+        print('Best cost function val: {}'.format(pop.best_cost_fn_val))
+        print('Average cost function val: {}'.format(pop.ave_cost_fn_val))
+        print('Median cost function val: {}'.format(pop.med_cost_fn_val))
