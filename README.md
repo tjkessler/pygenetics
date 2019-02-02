@@ -19,8 +19,15 @@ pip install pygenetics
 Note: if multiple Python releases are installed on your system (e.g. 2.7 and 3.6), you may need to execute the correct version of pip. For Python 3.X, change **pip install pygenetics** to **pip3 install pygenetics**.
 
 ### Method 2: From source
-- Download the PyGenetics repository, navigate to the download location on the command line/terminal, and execute 
-**"python setup.py install"**. 
+- Download the PyGenetics repository, navigate to the download location on the command line/terminal, and execute:
+```
+python setup.py install
+```
+
+To upgrade your version of PyGenetics to the latest release:
+```
+pip install --upgrade pygenetics
+```
 
 ## Usage
 To get started, import the **Population** object:
@@ -51,52 +58,88 @@ pop.add_parameter('first_integer', 0, 10)
 pop.add_parameter('second_integer', 0, 10)
 pop.add_parameter('third_integer', 0, 10)
 ```
-And generate the initial population of 100 members, each with three random integers between 1 and 10:
+And generate the initial population of 100 members, each with three random integers between 0 and 10:
 ```python
 pop.generate_population()
 ```
 Let's take a look at the population's average fitness:
 ```python
 >>> print(pop.fitness)
-15.52
+0.0832
 ```
-Our goal is to minimize the supplied parameters, so we want this value to be as close to 0 as possible. Let's repopulate our population for 6 generations, selecting the best 50 population members from each generation to produce the next generation's 100:
+Our goal is to minimize the supplied parameters which increases fitness, so we want this value to be as close to 1 as possible. Let's repopulate our population for 6 generations and print the average population fitness after each generation:
 ```python
 >>> for _ in range(6):
->>>     pop.next_generation(50)
+>>>     pop.next_generation()
 >>>     print(pop.fitness)
     
-5.71
-2.43
-9.78
-0.91
-0.1
-0.0
+0.0832
+0.0945
+0.1081
+0.1100
+0.125
+0.1289
 ```
+
+We can also view the average value returned by the supplied cost function:
+```python
+>>> for _ in range(6):
+>>>     pop.next_generation()
+>>>     print(pop.ave_cost_fn_val)
+
+12.2
+10.0
+8.7
+8.3
+7.1
+6.9
+```
+
+And the median value returned by the supplied cost function:
+```python
+>>> for _ in range(6):
+>>>     pop.next_generation()
+>>>     print(pop.med_cost_fn_val)
+
+11.5
+9.5
+7.5
+8.0
+7.0
+7.0
+```
+
 We can introduce a mutation rate (chance for any of a new population member's parameters to mutate) and a maximum mutation amount (allowed percentage change of the parameter, within the bounds of the parameter's minimum and maximum allowed values):
 ```python
-pop.next_generation(50, mut_rate=0.05, max_mut_amt=0.2)
+pop.next_generation(mut_rate=0.05, max_mut_amt=0.2)
 ```
 And change the distribution of chosen parent probabilities (reverse logspace proportions):
 ```python
-pop.next_generation(50, log_base=20)
+pop.next_generation(log_base=20)
 ```
-A higher 'log_base' results in members ordered first by the selection function to have a higher chance of being chosen as parents for the next generation.
+A higher 'log_base' results in members ordered first by the selection function to have a higher chance of being chosen as parents for the next generation. The default value for 'log_base' is 10.
 
-Our parameters look optimized - here are the population's average parameter values:
+We can print the population's average parameter values:
 ```python
 >>> print(pop.parameters)
 {'first_integer': 0.0, 'second_integer': 0.0, 'third_integer': 0.0}
 ```
+
+The fitness, cost function value and parameters for the best performing member seen:
+```python
+>>> print(pop.best_fitness, pop.best_cost_fn_val, pop.best_parameters)
+1.0 0 {'first_integer': 0, 'second_integer': 0, 'third_integer': 0}
+```
+
 We can also look at the parameter values for an individual population member:
 ```python
 >>> print(pop.members[0].parameters)
 {'first_integer': 0, 'second_integer': 0, 'third_integer': 0}
 ```
-And its fitness score:
+And its fitness score and cost function value:
 ```python
->>> print(pop.members[0].fitness_score)
-0
+>>> print(pop.members[0].fitness_score, pop.members[0].cost_fn_val)
+1.0 0
 ```
 For downloadable example python scripts, visit our [examples directory](https://github.com/tjkessler/PyGenetics/tree/master/examples).
 
