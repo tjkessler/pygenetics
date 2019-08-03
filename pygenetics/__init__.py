@@ -1,3 +1,5 @@
-from pygenetics.ga_core import Population
-import pygenetics.selection_functions
-__version__ = '0.6.0'
+from pygenetics.population import Population
+from pygenetics.member import Member
+from pygenetics.parameter import Parameter
+import pygenetics.utils
+__version__ = '1.0.0'
