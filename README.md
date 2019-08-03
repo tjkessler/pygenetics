@@ -1,4 +1,4 @@
-# PyGenetics
+# PyGenetics: Genetic Algorithm for Tuning Function Parameters
 
 [![GitHub version](https://badge.fury.io/gh/tjkessler%2FPyGenetics.svg)](https://badge.fury.io/gh/tjkessler%2FPyGenetics)
 [![PyPI version](https://badge.fury.io/py/pygenetics.svg)](https://badge.fury.io/py/pygenetics)
