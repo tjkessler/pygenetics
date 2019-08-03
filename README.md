@@ -118,15 +118,19 @@ for _ in range(10):
 
 Computing the next generation consists of:
 
-**(1)** Select a chromosome (parameter/gene set) from the population based on fitness (a higher fitness score results in a higher chance of being chosen)
-**(2a)** Perform crossover with probability _p<sub>c</sub>_ (default of 0.5, 50%); if crossover is not performed, place chromosome in next generation, perform step (2b)
-    **(a)** Select a different chromosome per method in (1)
-    **(b)** Select a crossover point between 1 and L-1 (random index in chromosomes' genes) with uniform probability
-    **(c)** Recombine chromosomes to form two offspring
-    **(d)** Perform mutation on each gene with probability _p<sub>m</sub>_ (default of 0.01, 1%)
-    **(e)** Place both offspring in the next generation
-**(2b)** Crossover not performed, perform mutation on each gene of the chromosome with probability _p<sub>m</sub>_ (default of 0.01, 1%), place chromosome in the next generation
-**(3)** If the next generation is not full (less than total population size), continue from step (1)
+- **1.** Select a chromosome (parameter/gene set) from the population based on fitness (a higher fitness score results in a higher chance of being chosen)
+
+- **2a.** Perform crossover with probability _p<sub>c</sub>_ (default of 0.5, 50%); if crossover is not performed, place chromosome in next generation, perform step (2b)
+
+    - Select a different chromosome per method in (1)
+    - Select a crossover point between 1 and L-1 (random index in chromosomes' genes) with uniform probability
+    - Recombine chromosomes to form two offspring
+    - Perform mutation on each gene with probability _p<sub>m</sub>_ (default of 0.01, 1%)
+    - Place both offspring in the next generation
+    
+- **2b.** Crossover not performed, perform mutation on each gene of the chromosome with probability _p<sub>m</sub>_ (default of 0.01, 1%), place chromosome in the next generation
+
+- **3.** If the next generation is not full (less than total population size), continue from step (1)
 
 Both _p<sub>c</sub>_ and _p<sub>m</sub>_ can be adjusted when the next generation is created:
 
