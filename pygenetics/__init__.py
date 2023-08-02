@@ -2,4 +2,6 @@ from pygenetics.population import Population
 from pygenetics.member import Member
 from pygenetics.parameter import Parameter
 import pygenetics.utils
-__version__ = '1.0.0'
+import pkg_resources
+
+__version__ = pkg_resources.get_distribution('pygenetics').version
