@@ -1,13 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# pygenetics/population.py
-# v.1.0.0
-# Developed in 2019 by Travis Kessler <travis.j.kessler@gmail.com>
-#
-# Contains the Population object
-#
-
 from bisect import bisect
 from multiprocessing import Pool
 from random import random, uniform
@@ -24,7 +14,7 @@ class Population:
 
     def __init__(self, pop_size: int,
                  objective_fn: Callable[[list], Union[int, float]],
-                 obj_fn_args: dict={}, num_processes: int=1):
+                 obj_fn_args: dict = {}, num_processes: int = 1):
         ''' Population object: initializes a genetic algorithm population with
         user-specified population size, objective function and any additional
         immutable objects to pass to the objective function
@@ -91,7 +81,7 @@ class Population:
         return (sum(m._obj_fn_val for m in self._members) / len(self._members))
 
     def add_param(self, min_val: Union[int, float], max_val: Union[int, float],
-                  restrict: bool=True):
+                  restrict: bool = True):
         ''' Population.add_param: adds a parameter to be processed by the user-
         supplied objective function
 
@@ -153,7 +143,8 @@ class Population:
 
             self._members.append(Member(result[0], result[1]))
 
-    def next_generation(self, p_crossover: float=0.5, p_mutation: float=0.01):
+    def next_generation(self, p_crossover: float = 0.5,
+                        p_mutation: float = 0.01):
         ''' Population.next_generation: generates the next generation of
         population members; members are chosen proportionally based on their
         fitness, where a higher fitness results in a higher chance to be

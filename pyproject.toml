@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pygenetics"
+version = "1.0.1"
+authors = [
+    { name="Travis Kessler", email="travis.j.kessler@gmail.com" },
+]
+description = "Genetic algorithm framework for tuning variables in user-suppled functions"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/tjkessler/pygenetics"
+"Bug Tracker" = "https://github.com/tjkessler/pygenetics/issues"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]

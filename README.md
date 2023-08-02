@@ -13,17 +13,7 @@ PyGenetics is an open source Python package used to tune parameters for user-sup
 
 # Installation:
 
-### Prerequisites:
-- Have Python 3.X installed
-- Have the ability to install Python packages
-
 ### Method 1: pip
-If you are working in a Linux/Mac environment:
-```
-sudo pip install pygenetics
-```
-
-Alternatively, in a Windows or virtualenv environment:
 ```
 pip install pygenetics
 ```
@@ -33,12 +23,10 @@ To update your version of PyGenetics to the latest version, use:
 pip install --upgrade pygenetics
 ```
 
-Note: if multiple Python releases are installed on your system (e.g. 2.7 and 3.7), you may need to execute the correct version of pip. For Python 3.7, change **"pip install pygenetics"** to **"pip3 install pygenetics"**.
-
 ### Method 2: From source
 Download the PyGenetics repository, navigate to the download location on the command line/terminal, and execute:
 ```
-python setup.py install
+pip install .
 ```
 
 There are currently no additional dependencies for PyGenetics.
