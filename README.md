@@ -3,7 +3,6 @@
 [![GitHub version](https://badge.fury.io/gh/tjkessler%2FPyGenetics.svg)](https://badge.fury.io/gh/tjkessler%2FPyGenetics)
 [![PyPI version](https://badge.fury.io/py/pygenetics.svg)](https://badge.fury.io/py/pygenetics)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/TJKessler/PyGenetics/master/LICENSE.txt)
-[![Build Status](https://dev.azure.com/travisjkessler/personal-repos/_apis/build/status/tjkessler.PyGenetics?branchName=master)](https://dev.azure.com/travisjkessler/personal-repos/_build/latest?definitionId=7&branchName=master)
 
 PyGenetics is an open source Python package used to tune parameters for user-supplied functions. Inspired by [genetic algorithms](https://www.researchgate.net/profile/Darrell_Whitley2/publication/2425017_A_Genetic_Algorithm_Tutorial/links/563214a108ae506cea68fd96/A-Genetic-Algorithm-Tutorial.pdf), PyGenetics is able to optimize variables in a multidimensional search space to minimize a "cost" (e.g. an error value returned by the user-supplied function).
 
