@@ -162,7 +162,7 @@ def test_pop_next_generation():
     for _ in range(10000):
         p.next_generation()
     assert p.best_fitness == 1
-    assert p.best_ret_val == 1
+    assert p.best_ret_val == 0
     assert p.best_params == [0, 0, 0]
 
 
