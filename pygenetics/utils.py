@@ -1,13 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# pygenetics/utils.py
-# v.1.0.0
-# Developed in 2019 by Travis Kessler <travis.j.kessler@gmail.com>
-#
-# Contains function utilized by PyGenetics classes
-#
-
 from random import randint, uniform
 
 

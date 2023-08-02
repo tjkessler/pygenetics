@@ -1,13 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# pygenetics/member.py
-# v.1.0.0
-# Developed in 2019 by Travis Kessler <travis.j.kessler@gmail.com>
-#
-# Contains the Member object
-#
-
 from typing import Union
 
 
@@ -31,8 +21,8 @@ class Member:
 
     @staticmethod
     def calc_fitness(obj_fn_val: Union[int, float]) -> float:
-        ''' Static method: Member.calc_fitness: Calculates fitness score based on
-        objective function value, using the equation:
+        ''' Static method: Member.calc_fitness: Calculates fitness score based
+        on objective function value, using the equation:
 
         fitness = 1 / (1 + ofv)     if ofv >= 0
         fitness = 1 + abs(ofv)      if ofv < 0

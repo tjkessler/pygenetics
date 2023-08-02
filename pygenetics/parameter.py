@@ -1,13 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# pygenetics/parameter.py
-# v.1.0.0
-# Developed in 2019 by Travis Kessler <travis.j.kessler@gmail.com>
-#
-# Contains the Parameter object
-#
-
 from random import uniform
 from typing import Union
 
@@ -15,7 +5,7 @@ from typing import Union
 class Parameter:
 
     def __init__(self, min_val: Union[int, float], max_val: Union[int, float],
-                 restrict: bool=True):
+                 restrict: bool = True):
         ''' Parameter object: houses information about a user-supplied
         parameter including data type, minimum/maximum initialization values,
         and whether the parameter is limited to [min_val, max_val] when
